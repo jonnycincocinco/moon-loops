@@ -1,0 +1,160 @@
+<!-- curl 'https://api.ipgeolocation.io/astronomy?apiKey=58bbe81135ec4db0b9b578290429d068&tz=America/Los_Angeles' -->
+<!-- curl 'https://api.ipgeolocation.io/ipgeo?apiKey=58bbe81135ec4db0b9b578290429d068&tz=America/Los_Angeles' -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+
+<div id=a>s</div>
+
+<button type="button" class="btn-play" name="button">sound 1</button>
+<button type="button" class="btn-stop" name="button">stop</button>
+
+</body>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzicato/0.6.4/Pizzicato.min.js"></script>
+
+<script>
+  var e = document.querySelector('#a')
+
+//   var request = new XMLHttpRequest()
+//
+//   // Open a new connection, using the GET request on the URL endpoint
+//   request.open('GET', 'https://api.ipgeolocation.io/astronomy?apiKey=58bbe81135ec4db0b9b578290429d068&tz=America/Los_Angeles', true)
+//
+//   request.onload = function() {
+//     // Begin accessing JSON data here
+//     const data = JSON.parse(request.responseText)
+// //    console.log(data);
+//   }
+//
+//   // Send request
+//   request.send()
+
+
+
+  function makerequest() {
+    return Promise.resolve($.ajax({
+        url: 'https://api.ipgeolocation.io/astronomy?apiKey=58bbe81135ec4db0b9b578290429d068&tz=America/Los_Angeles',
+        dataType: "json",
+        type: "GET",
+        success: function(response) {
+            view_data = response.view_data;
+            const data = Math.round(response.moon_distance / 20);
+            e.innerHTML = data;
+          //  console.log(response);
+
+            setTimeout(makerequest, 100000);
+
+            var lowPassFilter = new Pizzicato.Effects.LowPassFilter({
+                // frequency: 230,
+                frequency: data,
+                peak: 10
+            });
+            console.log('freq:',lowPassFilter.frequency);
+            var sound = new Pizzicato.Sound({
+                source: 'file',
+                options: { path: './audio/sound-1.wav' }
+            }, function() {
+                console.log('sound file loaded!');
+            });
+            sound.addEffect(lowPassFilter);
+
+            $('.btn-play').click(function() {
+              sound.play();
+            });
+            $('.btn-stop').click(function() {
+              sound.stop();
+            });
+        }
+    }));
+}
+
+
+// reference moon_distance data
+// (index):51 freq: 20021.798828125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.802734375
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.802734375
+// (index):56 sound file loaded!
+// 2(index):51 freq: 20021.806640625
+// 2(index):56 sound file loaded!
+// (index):51 freq: 20021.810546875
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.810546875
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.814453125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.814453125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.818359375
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.818359375
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.8203125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.822265625
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.82421875
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.82421875
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.828125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.828125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.83203125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.83203125
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.8359375
+// (index):56 sound file loaded!
+// (index):51 freq: 20021.8359375
+// (index):56 sound file loaded!
+
+
+  makerequest();
+
+
+// expose the data (if needed) 
+  async function asyncCall() {
+  try {
+      let data = await makerequest();
+      const distance  = Math.round(data.moon_distance / 20);
+      // console.log('Data:', distance);
+
+      // pizzicato
+      // var sound = new Pizzicato.Sound({
+      //     source: 'file',
+      //     options: { path: './audio/sound-1.wav' }
+      // }, function() {
+      //     console.log('sound file loaded!');
+      // });
+
+      // var lowPassFilter = new Pizzicato.Effects.LowPassFilter({
+      //     frequency: distance,
+      //     peak: 10
+      // });
+      //
+      // sound.addEffect(lowPassFilter);
+      //
+      // $('.btn').click(function() {
+      //   sound.play();
+      // });
+
+  } catch (error) {
+      console.log('Error:', error);
+  }
+};
+
+asyncCall()
+
+
+
+</script>
+</html>
